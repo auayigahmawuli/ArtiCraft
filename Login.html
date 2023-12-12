@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>Log in</title>
-        <link rel="stylesheet" href="SignUp.css">
+        <link rel="stylesheet" href="Login.css">
     </head>
     <body>
         <div class="box">
@@ -23,7 +23,7 @@
         <script type="module">
                // Import the functions you need from the SDKs you need
             import { initializeApp } from "firebase/app";
-            import { signinWithEmailAndPassword } from "firebase/auth"
+            import { signInWithEmailAndPassword  } from "firebase/auth"
   
   // Your web app's Firebase configuration
             const firebaseConfig = {
@@ -44,13 +44,13 @@
               e.preventDefault();
               const email = document.getElementById("email").value
               const password = document.getElementById("password").value
-              signinWithEmailAndPassword(firebaseAuth, email, password)
+              signInWithEmailAndPassword (firebaseAuth, email, password)
              .then(userCred => {
                 // userCred.user will have all information
                // regarding our user, if they are signed-in
-               console.log(userCred.user?.email)  
+               console.log(userCred.user)  
              })
-                alert("Log in Sucessfull  !");
+                alert("Log in Sucessful  !");
                 window.location.href = "index.html"
              })
 
