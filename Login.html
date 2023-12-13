@@ -1,59 +1,80 @@
-<html>
-    <head>
-        <title>Log in</title>
-        <link rel="stylesheet" href="Login.css">
-    </head>
-    <body>
-        <div class="box">
-            <div class="form">
-                <h2>Log in</h2>
-                <form>
-                    <div class="inputbox">
-                        <input type="email" value="" id="email" required>
-                        <span>E-mail</span>
-                    </div>
-                    <div class="inputbox">
-                        <input type="text" value="" id="password" required>
-                        <span>Password</span>
-                    </div>
-                    <input type="submit" value="submit" class="sub" id="submit">
-                </form>
-            </div>
+<span style="font-family: verdana, geneva, sans-serif;"><!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <title>Login | By Code Info</title>
+        <link rel="stylesheet" href="assets/css/form-style.css" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <div class="login-box">
+          <h1>Login</h1>
+          <form id="MainForm">
+            <label>Email</label>
+            <input type="email" placeholder="name@example.com" id="emailInp" />
+            <label>Password</label>
+            <input type="password" placeholder="Password" id="passwordInp" />
+            <button type="submit" class="btn btn-primary">Sign In</button>
+          </form>
         </div>
+        <p class="para-2">
+          Not have an account? <a href="signup.html">Sign Up Here</a>
+        </p>
+
         <script type="module">
-               // Import the functions you need from the SDKs you need
-            import { initializeApp } from "firebase/app";
-            import { signInWithEmailAndPassword  } from "firebase/auth"
-  
-  // Your web app's Firebase configuration
-            const firebaseConfig = {
-              apiKey: "AIzaSyCrw_CarqkEJ5SEGe6igjSoVHGFgdzy6HE",
-              authDomain: "articraft-ea3c6.firebaseapp.com",
-              projectId: "articraft-ea3c6",
-              storageBucket: "articraft-ea3c6.appspot.com",
-              messagingSenderId: "841675948280",
-              appId: "1:841675948280:web:daf1cd7082c14f88a27b0d"
-            };
+          // Import the functions you need from the SDKs you need
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+          import { getDatabase, get, ref, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+          import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  // Initialize Firebase
-            const app = initializeApp(firebaseConfig);
+         
+          // Your web app's Firebase configuration
+          const firebaseConfig = {
+            apiKey: "AIzaSyCjdoytSYj65l09gz_i-iKTw2DkCex79Ug",
+            authDomain: "articrafts-users.firebaseapp.com",
+            projectId: "articrafts-users",
+            storageBucket: "articrafts-users.appspot.com",
+            messagingSenderId: "477808218658",
+            appId: "1:477808218658:web:d4f08ee89338558457b07b",
+            databaseURL: "https://articrafts-users-default-rtdb.firebaseio.com/"
+          };
+         
+          // Initialize Firebase
+          const app = initializeApp(firebaseConfig);
+          const db = getDatabase();
+          const auth = getAuth(app);
+          const dbref = ref(db);
 
-   //get ref to database services
+          let EmailInp = document.getElementById('emailInp');
+          let PassInp = document.getElementById('passwordInp');
+          let MainForm = document.getElementById('MainForm');
 
-             document.getElementById("submit").addEventListener('click', function(e){
-              e.preventDefault();
-              const email = document.getElementById("email").value
-              const password = document.getElementById("password").value
-              signInWithEmailAndPassword (firebaseAuth, email, password)
-             .then(userCred => {
-                // userCred.user will have all information
-               // regarding our user, if they are signed-in
-               console.log(userCred.user)  
-             })
-                alert("Log in Sucessful  !");
-                window.location.href = "index.html"
-             })
+          let SignInUser = evt => {
+              evt.preventDefault();
 
-        </script>
-    </body>
-</html>
+              signInWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
+              .then((credentials)=>{
+                  get(child(dbref, 'UsersAuthList/' + credentials.user.uid)).then((snapshot)=>{
+                    if(snapshot.exists){
+                      sessionStorage.setItem("user-info", JSON.stringify({
+                        firstname: snapshot.val().firstname,
+                        lastname: snapshot.val().lastname
+                      }))
+                      sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
+                      window.location.href = 'inner-page.html';
+                    }
+                  })
+              })
+              .catch((error)=>{
+                  alert(error.message);
+                  console.log(error.code);
+                  console.log(error.message);
+              })
+          }
+
+          MainForm.addEventListener('submit', SignInUser);
+        </script>        
+      </body>
+    </html></span>
