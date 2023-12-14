@@ -1,0 +1,80 @@
+<span style="font-family: verdana, geneva, sans-serif;"><!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <title>Login | By Code Info</title>
+        <link rel="stylesheet" href="assets/css/form-style.css" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <div class="login-box">
+          <h1>Login</h1>
+          <form id="MainForm">
+            <label>Email</label>
+            <input type="email" placeholder="name@example.com" id="emailInp" />
+            <label>Password</label>
+            <input type="password" placeholder="Password" id="passwordInp" />
+            <button type="submit" class="btn btn-primary">Sign In</button>
+          </form>
+        </div>
+        <p class="para-2">
+          Not have an account? <a href="signup.html">Sign Up Here</a>
+        </p>
+
+        <script type="module">
+          // Import the functions you need from the SDKs you need
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+          import { getDatabase, get, ref, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+          import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+         
+          // Your web app's Firebase configuration
+          const firebaseConfig = {
+            apiKey: "AIzaSyCjdoytSYj65l09gz_i-iKTw2DkCex79Ug",
+            authDomain: "articrafts-users.firebaseapp.com",
+            projectId: "articrafts-users",
+            storageBucket: "articrafts-users.appspot.com",
+            messagingSenderId: "477808218658",
+            appId: "1:477808218658:web:d4f08ee89338558457b07b",
+            databaseURL: "https://articrafts-users-default-rtdb.firebaseio.com/"
+          };
+         
+          // Initialize Firebase
+          const app = initializeApp(firebaseConfig);
+          const db = getDatabase();
+          const auth = getAuth(app);
+          const dbref = ref(db);
+
+          let EmailInp = document.getElementById('emailInp');
+          let PassInp = document.getElementById('passwordInp');
+          let MainForm = document.getElementById('MainForm');
+
+          let SignInUser = evt => {
+              evt.preventDefault();
+
+              signInWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
+              .then((credentials)=>{
+                  get(child(dbref, 'UsersAuthList/' + credentials.user.uid)).then((snapshot)=>{
+                    if(snapshot.exists){
+                      sessionStorage.setItem("user-info", JSON.stringify({
+                        firstname: snapshot.val().firstname,
+                        lastname: snapshot.val().lastname
+                      }))
+                      sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
+                      window.location.href = 'inner-page.html';
+                    }
+                  })
+              })
+              .catch((error)=>{
+                  alert(error.message);
+                  console.log(error.code);
+                  console.log(error.message);
+              })
+          }
+
+          MainForm.addEventListener('submit', SignInUser);
+        </script>        
+      </body>
+    </html></span>
